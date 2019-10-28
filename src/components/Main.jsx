@@ -95,7 +95,7 @@ class Main extends React.Component {
         return array;
     }
 
-    UNSAFE_componentWillMount() {
+    componentWillMount() {
         let { nr } = this.state;
         this.pushData(nr);
     }
