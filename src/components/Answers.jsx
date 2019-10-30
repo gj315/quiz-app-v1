@@ -1,66 +1,66 @@
-import React from 'react';
+import React from 'react'
 
 class Answers extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            isAnswered: false,
-            classNames: ['', '', '', '']
-        }
-
-        this.checkAnswer = this.checkAnswer.bind(this);
+  constructor (props) {
+    super(props)
+    this.state = {
+      isAnswered: false,
+      classNames: ['', '', '', '']
     }
 
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            classNames: nextProps.classNames,
-        });
+    this.handleCheckAnswer = this.handleCheckAnswer.bind(this)
+  }
+
+  componentWillReceiveProps (nextProps) {
+    this.setState({
+      classNames: nextProps.classNames
+    })
+  }
+
+  handleCheckAnswer (e) {
+    const { isAnswered } = this.props
+
+    if (!isAnswered) {
+      const elem = e.currentTarget
+      const { correct, onIncreaseScore, onWrongAttemp } = this.props
+      const answer = Number(elem.dataset.id)
+
+      const updatedClassNames = this.state.classNames
+      let optionChoosenValue = false
+
+      if (answer === correct) {
+        updatedClassNames[answer - 1] = 'right'
+        optionChoosenValue = true
+        onIncreaseScore()
+      } else {
+        updatedClassNames[answer - 1] = 'wrong'
+        optionChoosenValue = false
+        onWrongAttemp()
+      }
+
+      this.setState({
+        classNames: updatedClassNames
+      })
+
+      this.props.onShowButton(optionChoosenValue)
     }
-    checkAnswer(e) {
-        let { isAnswered } = this.props;
+  }
 
-        if (!isAnswered) {
+  render () {
+    const { answers } = this.props
+    const optionTypes = ['A', 'B', 'C', 'D']
+    const { classNames } = this.state
 
-            let elem = e.currentTarget;
-            let { correct, increaseScore, wrongAttemp } = this.props;
-            let answer = Number(elem.dataset.id);
-
-            let updatedClassNames = this.state.classNames;
-            let optionChoosenValue = false;
-
-            if (answer === correct) {
-                updatedClassNames[answer - 1] = 'right';
-                optionChoosenValue = true;
-                increaseScore();
-            } else {
-                updatedClassNames[answer - 1] = 'wrong';
-                optionChoosenValue = false;
-                wrongAttemp();
-            }
-
-            this.setState({
-                classNames: updatedClassNames
-            })
-
-            this.props.showButton(optionChoosenValue);
-        }
-    }
-
-    render() {
-        let { answers } = this.props;
-        const optionTypes = ['A', 'B', 'C', 'D'];
-        let { classNames } = this.state;
-        
-        return (
-            <div id="answers">
-                <ul>
-                    {answers.map((answer, idx) => (
-                        <li onClick={this.checkAnswer} key={idx} className={classNames[idx]} data-id={idx+1} ><span>{optionTypes[idx]}</span> <p>{answer}</p></li>
-                    ))}
-                </ul>
-            </div>
-        );
-    }
+    return (
+      <div id='answers'>
+        <ul>
+          {answers.map((answer, idx) => (
+            <li key={idx} onClick={this.handleCheckAnswer} className={classNames[idx]} data-id={idx + 1}><span>{optionTypes[idx]}</span> <p>{answer}</p></li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
 }
 
 export default Answers
